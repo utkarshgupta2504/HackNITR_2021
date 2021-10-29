@@ -12,7 +12,8 @@ export default function MapContainer() {
     const [zoom, setZoom] = useState(9);
 
     useEffect(() => {
-        if (map.current) return; // initialize map only once
+
+        if (map.current) return;
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
@@ -29,6 +30,31 @@ export default function MapContainer() {
             setZoom(map.current.getZoom().toFixed(2));
         });
     });
+
+    useEffect(() => {
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                console.log("Latitude is :", position.coords.latitude);
+                console.log("Longitude is :", position.coords.longitude);
+
+                map.current.flyTo({
+                    center: [
+                        position.coords.longitude,
+                        position.coords.latitude
+                    ],
+                    zoom: 12,
+                    essential: true,
+                });
+            }, (err) => {
+                console.log(`Location Error: ${err.message}`);
+            }, {
+                enableHighAccuracy: true,
+            });
+        } else {
+            console.log("Location not available");
+        }
+    }, []);
 
     return (
         <div>
