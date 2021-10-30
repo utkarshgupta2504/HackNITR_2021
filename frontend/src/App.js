@@ -1,13 +1,8 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import MapContainer from './containers/map_container/map_container';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import MapContainer from "./containers/map_container/map_container";
 
 function App() {
   return (
