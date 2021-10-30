@@ -1,7 +1,8 @@
 import React, { PureComponent, useState, useEffect } from "react";
-import ReactMapGL, { Marker } from "react-map-gl";
+import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
 import Geocoder from "react-mapbox-gl-geocoder";
 import { Container, Col, Row, Button } from "reactstrap";
+import { easeCubic } from "d3-ease";
 
 import "./map_container.css";
 
@@ -30,8 +31,8 @@ const CustomMarker = ({ index, marker }) => {
 
 const MapView = (props) => {
   let [viewport, setViewPort] = useState({
-    latitude: 45.50884,
-    longitude: -73.58781,
+    latitude: 0,
+    longitude: 0,
     zoom: 15,
   });
 
@@ -41,11 +42,16 @@ const MapView = (props) => {
   useEffect(() => {}, []);
 
   const onSelected = (viewport, item) => {
-    setViewPort(viewport);
     setTempMarker({
       name: item.place_name,
       longitude: item.center[0],
       latitude: item.center[1],
+    });
+    setViewPort({
+      ...viewport,
+      transitionDuration: 5000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: easeCubic,
     });
   };
 
@@ -54,6 +60,10 @@ const MapView = (props) => {
       return [...prevState, tempMarker];
     });
     setTempMarker(null);
+  };
+
+  const changeViewPort = (viewport) => {
+    setViewPort(viewport);
   };
 
   return (
@@ -87,7 +97,7 @@ const MapView = (props) => {
             mapStyle="mapbox://styles/mapbox/streets-v11"
             {...viewport}
             {...mapStyle}
-            onViewportChange={(viewport) => setViewPort(viewport)}
+            onViewportChange={changeViewPort}
           >
             {tempMarker && (
               <Marker
