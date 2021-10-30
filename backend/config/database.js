@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const MONGO_URI =
-  "mongodb+srv://usp:LetsWinThisThing@cluster0.ci4x0.mongodb.net/myFirstDatabase?retryWrites=true&w=majorit";
+  "mongodb+srv://usp:LetsWinThisThing@cluster0.ci4x0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 exports.connect = () => {
   // Connecting to the database
