@@ -14,11 +14,11 @@ export const ComponentsNav = [
                 label: 'Standard Buttons',
                 to: '#/elements/buttons-standard',
             },
-            // {
-            //     label: 'Dropdowns',
-            //     to: '#/elements/dropdowns',
+            {
+                label: 'Dropdowns',
+                to: '#/elements/dropdowns',
 
-            // },
+            },
             // {
             //     label: 'Icons',
             //     to: '#/elements/icons',
