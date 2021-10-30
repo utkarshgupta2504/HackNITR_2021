@@ -60,7 +60,11 @@ module.exports.calculate = async (req, res) => {
           return e.trim().length > 0;
         })[4];
       console.log(emmissionValue);
-      res.send(200, { "emmision-value": emmissionValue });
+      res.send(200, {
+        "emmision-value": Math.max(0.01, emmissionValue),
+        "baby-trees-saved": Math.max(0.01, emmissionValue) / 0.06,
+        "annual-trees-saved": (Math.max(0.01, emmissionValue) / 0.06) * 365,
+      });
     })
     .catch(function (error) {
       console.log(error);
