@@ -15,9 +15,7 @@ module.exports.login = async (req, res) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
-      const token = jwt.sign({ user_id: user._id, email }, "USP_TEAM_FTW", {
-        expiresIn: "2h",
-      });
+      const token = jwt.sign({ user_id: user._id, email }, "USP_TEAM_FTW", {});
 
       // save user token
       user.token = token;
@@ -73,4 +71,25 @@ module.exports.register = async (req, res) => {
     console.log(err);
   }
   // Our register logic ends here
+};
+
+module.exports.addTrees = async (req, res) => {
+  var { qty, id } = req.body;
+  const user = await User.findOne({ id });
+  if (!user) {
+    res.status(404).send("User not found");
+  }
+  User.findByIdAndUpdate(
+    id,
+    { $inc: { trees_saved: qty } },
+    function (err, data) {
+      if (err) {
+        res.status(500).json(err);
+      } else {
+        console.log(data);
+        res.status(200).send("Updated!");
+      }
+      //error handling
+    }
+  );
 };
