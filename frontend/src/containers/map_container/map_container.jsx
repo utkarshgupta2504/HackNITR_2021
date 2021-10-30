@@ -3,6 +3,7 @@ import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
 import Geocoder from "react-mapbox-gl-geocoder";
 import { Container, Col, Row, Button } from "reactstrap";
 import { easeCubic } from "d3-ease";
+import Axios from "axios";
 
 import "./map_container.css";
 
@@ -42,17 +43,25 @@ const MapView = (props) => {
   let [locationAvailable, setLocationAvailable] = useState(false);
 
   let [totalCarbonFootprint, setTotalCarbonFootprint] = useState(0);
+  let [distance, setDistance] = useState(0);
 
-  getCurrentLocation = () => {
+  const getCurrentLocation = (butttonClick = false) => {
     if ("geolocation" in navigator) {
       setLocationAvailable(true);
       navigator.geolocation.getCurrentPosition(
         (postion) => {
+          if (butttonClick) {
+            setTempMarker({
+              name: "Current Location",
+              latitude: postion.coords.latitude,
+              longitude: postion.coords.longitude,
+            });
+          }
           setViewPort({
             longitude: postion.coords.longitude,
             latitude: postion.coords.latitude,
             zoom: 15,
-            transitionDuration: 5000,
+            transitionDuration: butttonClick ? 1000 : 5000,
             transitionInterpolator: new FlyToInterpolator(),
             transitionEasing: easeCubic,
           });
@@ -64,6 +73,29 @@ const MapView = (props) => {
       );
     } else {
       console.log("Location not available!");
+    }
+  };
+
+  const getDistance = async () => {
+    if (markers.length < 2) {
+      console.log("Need 2 cooridnates");
+      return;
+    }
+
+    try {
+      let response = await Axios.get(
+        `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${markers[0].longitude},${markers[0].latitude};${markers[1].longitude},${markers[1].latitude}?access_token=${mapboxApiKey}&annotations=distance,duration&sources=0&destinations=1`
+      );
+
+      if (response.status == 200) {
+        console.log(response.data);
+
+        setDistance(response.data.distances[0][0]);
+      } else {
+        console.log("Map Box Api Fetch error: " + response.data);
+      }
+    } catch (err) {
+      console.log("Map box distance api error" + err);
     }
   };
 
@@ -115,8 +147,22 @@ const MapView = (props) => {
           />
         </Col>
         <Col>
+          <img
+            src="https://img.icons8.com/external-those-icons-fill-those-icons/24/000000/external-gps-maps-and-locations-those-icons-fill-those-icons.png"
+            onClick={() => {
+              getCurrentLocation(true);
+            }}
+          />
+        </Col>
+
+        <Col>
           <Button color="primary" onClick={add}>
             Add
+          </Button>
+        </Col>
+        <Col>
+          <Button color="primary" onClick={getDistance}>
+            Get Distance
           </Button>
         </Col>
       </Row>
@@ -140,6 +186,7 @@ const MapView = (props) => {
               </Marker>
             )}
             {markers.map((marker, index) => {
+              console.log(marker);
               return (
                 <CustomMarker
                   key={`marker-${index}`}
@@ -150,6 +197,9 @@ const MapView = (props) => {
             })}
           </ReactMapGL>
         </Col>
+      </Row>
+      <Row>
+        <Col>Total Distance: {distance}</Col>
       </Row>
     </Container>
   );
