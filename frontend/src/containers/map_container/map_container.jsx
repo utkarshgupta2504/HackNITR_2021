@@ -31,15 +31,45 @@ const CustomMarker = ({ index, marker }) => {
 
 const MapView = (props) => {
   let [viewport, setViewPort] = useState({
-    latitude: 0,
-    longitude: 0,
-    zoom: 15,
+    latitude: 20.5937,
+    longitude: 78.9629,
+    zoom: 4,
   });
 
   let [tempMarker, setTempMarker] = useState(null);
   let [markers, setMarkers] = useState([]);
 
-  useEffect(() => {}, []);
+  let [locationAvailable, setLocationAvailable] = useState(false);
+
+  let [totalCarbonFootprint, setTotalCarbonFootprint] = useState(0);
+
+  getCurrentLocation = () => {
+    if ("geolocation" in navigator) {
+      setLocationAvailable(true);
+      navigator.geolocation.getCurrentPosition(
+        (postion) => {
+          setViewPort({
+            longitude: postion.coords.longitude,
+            latitude: postion.coords.latitude,
+            zoom: 15,
+            transitionDuration: 5000,
+            transitionInterpolator: new FlyToInterpolator(),
+            transitionEasing: easeCubic,
+          });
+        },
+        (err) => {
+          console.log(`Location Fetch Error: ${err.message}`);
+        },
+        { enableHighAccuracy: true }
+      );
+    } else {
+      console.log("Location not available!");
+    }
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   const onSelected = (viewport, item) => {
     setTempMarker({
