@@ -7,7 +7,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import MapContainer from './containers/map_container';
+import MapContainer from './containers/map_container/map_container';
 
 function App() {
   return (
