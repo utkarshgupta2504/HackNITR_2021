@@ -18,12 +18,12 @@ const params = {
   country: "ca",
 };
 
-const CustomMarker = ({ index, marker }) => {
+const CustomMarker = ({ isSource, marker }) => {
   return (
     <Marker longitude={marker.longitude} latitude={marker.latitude}>
       <div className="marker">
         <span>
-          <b>{index + 1}</b>
+          <b>{isSource ? "S" : "D"}</b>
         </span>
       </div>
     </Marker>
@@ -39,6 +39,8 @@ const MapView = (props) => {
 
   let [tempMarker, setTempMarker] = useState(null);
   let [markers, setMarkers] = useState([]);
+  let [sourceMarker, setSourceMarker] = useState(null);
+  let [destinationMarker, setDestinationMarker] = useState(null);
 
   let [locationAvailable, setLocationAvailable] = useState(false);
 
@@ -77,14 +79,14 @@ const MapView = (props) => {
   };
 
   const getDistance = async () => {
-    if (markers.length < 2) {
+    if (sourceMarker == null || destinationMarker == null) {
       console.log("Need 2 cooridnates");
       return;
     }
 
     try {
       let response = await Axios.get(
-        `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${markers[0].longitude},${markers[0].latitude};${markers[1].longitude},${markers[1].latitude}?access_token=${mapboxApiKey}&annotations=distance,duration&sources=0&destinations=1`
+        `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${sourceMarker.longitude},${sourceMarker.latitude};${destinationMarker.longitude},${destinationMarker.latitude}?access_token=${mapboxApiKey}&annotations=distance,duration&sources=0&destinations=1`
       );
 
       if (response.status == 200) {
@@ -117,10 +119,12 @@ const MapView = (props) => {
     });
   };
 
-  const add = () => {
-    setMarkers((prevState) => {
-      return [...prevState, tempMarker];
-    });
+  const add = (isSource) => {
+    if (isSource) {
+      setSourceMarker(tempMarker);
+    } else {
+      setDestinationMarker(tempMarker);
+    }
     setTempMarker(null);
   };
 
@@ -154,12 +158,27 @@ const MapView = (props) => {
             }}
           />
         </Col>
-
         <Col>
-          <Button color="primary" onClick={add}>
-            Add
+          <Button
+            color="primary"
+            onClick={() => {
+              add(true);
+            }}
+          >
+            Set Source
           </Button>
         </Col>
+        <Col>
+          <Button
+            color="primary"
+            onClick={() => {
+              add(false);
+            }}
+          >
+            Set Destination
+          </Button>
+        </Col>
+
         <Col>
           <Button color="primary" onClick={getDistance}>
             Get Distance
@@ -185,16 +204,20 @@ const MapView = (props) => {
                 </div>
               </Marker>
             )}
-            {markers.map((marker, index) => {
-              console.log(marker);
-              return (
-                <CustomMarker
-                  key={`marker-${index}`}
-                  index={index}
-                  marker={marker}
-                />
-              );
-            })}
+            {sourceMarker && (
+              <CustomMarker
+                key={`marker-source`}
+                isSource={true}
+                marker={sourceMarker}
+              />
+            )}
+            {destinationMarker && (
+              <CustomMarker
+                key={`marker-destination`}
+                isSource={false}
+                marker={destinationMarker}
+              />
+            )}
           </ReactMapGL>
         </Col>
       </Row>
