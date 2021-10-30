@@ -1,6 +1,8 @@
+require("./config/database").connect();
 const express = require("express");
 const app = express();
 const routes = require("./routes/index");
+
 const cors = require("cors");
 
 const port = 5000;
