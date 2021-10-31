@@ -143,7 +143,7 @@ const MapView = (props) => {
         });
         var config = {
           method: "post",
-          url: "http://3.144.30.250/api/carbon-calculator/calculate",
+          url: "https://vast-bastion-90714.herokuapp.com/api/carbon-calculator/calculate",
           headers: {
             "x-access-token": auth.getToken(),
             //   'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjE3ZDVkMzI2ZDJmZTU2MWVkOWEyYzkxIiwiZW1haWwiOiJzYW1hcnRoYXJvcmExNzZAZ21haWwuY29tIiwiaWF0IjoxNjM1NjA2MjQ1LCJleHAiOjE2MzU2MTM0NDV9.jTB5E7CEIKByFo_SLvEJ6H-vwUlSVg1nf7btJ1YYPJ0',
@@ -185,7 +185,7 @@ const MapView = (props) => {
       });
       var config = {
         method: 'post',
-        url: 'http://3.144.30.250/user/add-trees',
+        url: 'https://vast-bastion-90714.herokuapp.com/user/add-trees',
         headers: { 
           'Content-Type': 'application/x-www-form-urlencoded'
         },
