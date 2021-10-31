@@ -74,7 +74,7 @@ const Login = () => {
     });
     var config = {
       method: "post",
-      url: "https://vast-bastion-90714.herokuapp.com/api/user/login",
+      url: "https://vast-bastion-90714.herokuapp.com/user/login",
       data: qs.stringify(state),
     };
     console.log(config.data);
@@ -105,7 +105,7 @@ const Login = () => {
         console.log(err);
       });
     // axios
-    //   .post("https://vast-bastion-90714.herokuapp.com/api/user/login", qs.stringify(state))
+    //   .post("https://vast-bastion-90714.herokuapp.com/user/login", qs.stringify(state))
 
     //   .then((response) => {
     //     auth.setToken(response.data.jwt, true);

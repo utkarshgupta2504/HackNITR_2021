@@ -94,7 +94,7 @@ const Register = () => {
       console.log(userCredentials);
       var config = {
         method: "post",
-        url: "https://vast-bastion-90714.herokuapp.com/api/user/register",
+        url: "https://vast-bastion-90714.herokuapp.com/user/register",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
