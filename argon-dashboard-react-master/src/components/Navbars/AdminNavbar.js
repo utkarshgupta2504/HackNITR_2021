@@ -81,7 +81,7 @@ const AdminNavbar = (props) => {
                     <img
                       alt="..."
                       src={
-                        require("../../assets/img/theme/team-4-800x800.jpg")
+                        require("../../assets/img/theme/team-2-800x800.jpg")
                           .default
                       }
                     />
@@ -91,7 +91,8 @@ const AdminNavbar = (props) => {
                       className="mb-0 text-sm font-weight-bold"
                       style={{ color: "black" }}
                     >
-                      Jessica Jones
+                      {auth.getUserInfo().first_name}{" "}
+                      {auth.getUserInfo().last_name}
                     </span>
                   </Media>
                 </Media>

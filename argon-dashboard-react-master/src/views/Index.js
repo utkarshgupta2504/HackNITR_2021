@@ -134,7 +134,7 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <div className="col">
                     <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
+                      For the last 6 months
                     </h6>
                     <h2 className="mb-0">Total Saving of Trees</h2>
                   </div>

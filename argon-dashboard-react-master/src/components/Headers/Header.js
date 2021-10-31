@@ -18,8 +18,34 @@
 
 // reactstrap components
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
-
+import { useState, useEffect } from "react";
+import auth from "utils/auth";
 const Header = () => {
+  const [trees, setTrees] = useState(0);
+  useEffect(() => {
+    var axios = require("axios");
+    var qs = require("qs");
+    var data = qs.stringify({
+      email: auth.getUserInfo().email,
+      password: auth.getUserInfo().password,
+    });
+    var config = {
+      method: "post",
+      url: "http://3.144.30.250/user/login",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: data,
+    };
+    console.log(data);
+    axios(config)
+      .then(function (response) {
+        setTrees(response.data.trees_saved);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  });
   return (
     <>
       <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
@@ -36,15 +62,15 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                        TOTAL NUMBER OF TREES SAVED
+                          TOTAL NUMBER OF TREES SAVED
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">
-                          18
+                          {trees.toFixed(4)}
                         </span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-green text-white rounded-circle shadow">
-                          <i className="fas fa-tree"/>
+                          <i className="fas fa-tree" />
                         </div>
                       </Col>
                     </Row>
@@ -66,9 +92,11 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                        TREES SAVED THIS MONTH
+                          TREES SAVED THIS MONTH
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">0.5</span>
+                        <span className="h2 font-weight-bold mb-0">
+                          {trees.toFixed(4)}
+                        </span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
@@ -94,9 +122,11 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                        ANNUAL ESTIMATE OF TREES SAVED
+                          ANNUAL ESTIMATE OF TREES SAVED
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">11.76</span>
+                        <span className="h2 font-weight-bold mb-0">
+                          {(trees * 12).toFixed(4)}
+                        </span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
@@ -105,8 +135,8 @@ const Header = () => {
                       </Col>
                     </Row>
                     <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2" >
-                        <i className="fas fa-arrow-up"/> 1.10%
+                      <span className="text-success mr-2">
+                        <i className="fas fa-arrow-up" /> 1.10%
                       </span>{" "}
                       <span className="text-nowrap">Globally</span>
                     </p>
@@ -122,7 +152,7 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                        RANK ON LEADER BOARD
+                          RANK ON LEADER BOARD
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">1</span>
                       </div>

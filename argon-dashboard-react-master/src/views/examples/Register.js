@@ -106,7 +106,11 @@ const Register = () => {
             auth.setToken(res.data.token, true);
             const { email, first_name, last_name } = res.data;
             const id = res.data._id;
-            auth.setUserInfo({ email, id, first_name, last_name }, true);
+            let password = userCredentials.password;
+            auth.setUserInfo(
+              { email, id, first_name, last_name, password },
+              true
+            );
             console.log(`[Register]`);
             console.log(res);
             console.log(auth.getUserInfo());

@@ -1,11 +1,16 @@
+
 import React, { PureComponent, useState, useEffect } from "react";
 import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
+import { useHistory } from "react-router-dom";
+
 import "react-notifications/lib/notifications.css";
+// import auth from "utils/auth";
 import auth from "utils/auth";
 import {
   NotificationContainer,
   NotificationManager,
 } from "react-notifications";
+import swal from "sweetalert"
 import Geocoder from "react-mapbox-gl-geocoder";
 import{
     Button,
@@ -168,10 +173,43 @@ const MapView = (props) => {
       console.log("Map box distance api error" + err);
     }
   };
-
+  const history = useHistory()
   useEffect(() => {
     getCurrentLocation();
   }, []);
+  const addTrees = ()=>{
+    //   axios
+     setModal(!modal_visibile);
+     var data = qs.stringify({
+        'qty': trees,
+        'id': auth.getUserInfo()._id,
+        'email': auth.getUserInfo().email,
+        'token': auth.getToken() 
+      });
+      var config = {
+        method: 'post',
+        url: 'http://3.144.30.250/user/add-trees',
+        headers: { 
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data : data
+      };
+      
+      axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        swal(
+            "Hurray!!",
+            "Saved Trees Added to your name",
+            "success"
+          ).then((value) => {
+            history.push("/admin");
+          });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   const onSelected = (viewport, item) => {
     setTempMarker({
@@ -314,7 +352,7 @@ const MapView = (props) => {
       
      </div>
      <div className="modal-body">
-     <h4 >Total Distance to Destination: {distance}</h4>
+     <h4 >Total Distance to Destination: {distance/1000.0}km</h4>
      <h4  className="h4 text-danger" color="danger">Tonnes of CO2 emmision: {c02}</h4 >
      <h4 className="h4 text-success" color="danger">Number of baby trees saved if you take the metro: {trees.toFixed(4)}</h4 >
      <h4 className="h4 text-success" color="danger">Number of baby trees saved annually if you make it a habit: {treesAnnual.toFixed(4)}</h4 >
@@ -325,7 +363,7 @@ const MapView = (props) => {
        <Button
          color="success"
          type="button"
-         onClick={() => setModal(!modal_visibile)}
+         onClick={addTrees}
        >
          I'll save the Trees
        </Button>

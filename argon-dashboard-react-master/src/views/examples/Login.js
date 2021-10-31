@@ -82,8 +82,9 @@ const Login = () => {
       .then((response) => {
         auth.setToken(response.data.token, true);
         const { email, first_name, last_name } = response.data;
+        let password = state.password;
         const id = response.data._id;
-        auth.setUserInfo({ email, id, first_name, last_name }, true);
+        auth.setUserInfo({ email, id, first_name, last_name, password }, true);
         console.log(`[Login]`);
         console.log(response);
         console.log(auth.getUserInfo());
