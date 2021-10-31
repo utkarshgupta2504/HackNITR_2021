@@ -1,7 +1,32 @@
 import React, { PureComponent, useState, useEffect } from "react";
 import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
+import "react-notifications/lib/notifications.css";
+
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
 import Geocoder from "react-mapbox-gl-geocoder";
-import { Container, Col, Row, Button } from "reactstrap";
+import{
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    FormGroup,
+    Form,
+    Modal,
+    Input,
+    InputGroupAddon,
+    InputGroupText,
+    InputGroup,
+    FormFeedback,
+    Container,
+    Row,
+    // Label,
+    Col,
+    // CardTitle,
+    Alert,
+  } from "reactstrap";
 import { easeCubic } from "d3-ease";
 import Axios from "axios";
 
@@ -32,11 +57,13 @@ const CustomMarker = ({ isSource, marker }) => {
 };
 
 const MapView = (props) => {
+    <NotificationContainer/>
   let [viewport, setViewPort] = useState({
     latitude: 20.5937,
     longitude: 78.9629,
     zoom: 4,
   });
+  let [modal_visibile, setModal] = useState(true);
 
   let [tempMarker, setTempMarker] = useState(null);
   let [markers, setMarkers] = useState([]);
@@ -81,7 +108,13 @@ const MapView = (props) => {
 
   const getDistance = async () => {
     if (sourceMarker == null || destinationMarker == null) {
-      console.log("Need 2 cooridnates");
+        NotificationManager.error(
+            "Need the start and destination cooridnates both",
+            "Error!",
+            5000,
+            () => {}
+          );
+      console.log("e");
       return;
     }
 
@@ -134,7 +167,7 @@ const MapView = (props) => {
   };
 
   return (
-    
+    <>
 
     <Container fluid={true}>
       <Row>
@@ -156,6 +189,7 @@ const MapView = (props) => {
         </Col>
         <Col>
           <img
+          alt=""
             src="https://img.icons8.com/external-those-icons-fill-those-icons/24/000000/external-gps-maps-and-locations-those-icons-fill-those-icons.png"
             onClick={() => {
               getCurrentLocation(true);
@@ -164,7 +198,7 @@ const MapView = (props) => {
         </Col>
         <Col>
           <Button
-            color="primary"
+            color="success"
             onClick={() => {
               add(true);
             }}
@@ -174,7 +208,7 @@ const MapView = (props) => {
         </Col>
         <Col>
           <Button
-            color="primary"
+            color="success"
             onClick={() => {
               add(false);
             }}
@@ -184,7 +218,7 @@ const MapView = (props) => {
         </Col>
 
         <Col>
-          <Button color="primary" onClick={getDistance}>
+          <Button color="success" onClick={getDistance}>
             Get Distance
           </Button>
         </Col>
@@ -225,10 +259,44 @@ const MapView = (props) => {
           </ReactMapGL>
         </Col>
       </Row>
-      <Row>
-        <Col style={{ color: 'green', fontWeight: 'bold', fontSize: '1.5rem'}}>Total Distance: {distance}</Col>
-      </Row>
+      
     </Container>
+     <Modal className="modal-dialog-centered" isOpen={modal_visibile}>
+     <div className="modal-header">
+       <h5 className="modal-title" id="ModalLabel">
+         Terms and Conditions
+       </h5>
+       <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setModal(!modal_visibile)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+       
+       
+      
+     </div>
+     <div className="modal-body">
+     <h4 >Total Distance to Destination: {distance}</h4>
+     <h4  className="h4 text-danger" color="danger">Tonnes if CO2 emmision: 0.01</h4 >
+     <h4 className="h4 text-success" color="danger">Number of baby trees saved if you take the metro: 0.165</h4 >
+    
+     
+     </div>
+     <div className="modal-footer">
+       <Button
+         color="success"
+         type="button"
+         onClick={() => setModal(!modal_visibile)}
+       >
+         Agree
+       </Button>
+     </div>
+   </Modal>
+   </>
     
   );
 };
