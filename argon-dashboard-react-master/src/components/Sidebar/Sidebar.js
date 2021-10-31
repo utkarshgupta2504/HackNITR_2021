@@ -122,9 +122,9 @@ const Sidebar = (props) => {
             <img
               alt={logo.imgAlt}
               className="navbar-brand-img"
-              src={require("../../assets/img/brand/logo.png")}
+              src={require("../../assets/img/brand/logo.png").default}
             />
-            <span>Green Guide</span>
+            <span className="px-3">Green Guide</span>
           </NavbarBrand>
         ) : null}
         {/* User */}
