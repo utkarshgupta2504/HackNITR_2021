@@ -75,7 +75,7 @@ const Index = (props) => {
                     <h6 className="text-uppercase text-light ls-1 mb-1">
                       Overview
                     </h6>
-                    <h2 className="text-white mb-0">Sales value</h2>
+                    <h2 className="text-white mb-0">Trees Saved</h2>
                   </div>
                   <div className="col">
                     <Nav className="justify-content-end" pills>
@@ -128,7 +128,7 @@ const Index = (props) => {
                     <h6 className="text-uppercase text-muted ls-1 mb-1">
                       Performance
                     </h6>
-                    <h2 className="mb-0">Total orders</h2>
+                    <h2 className="mb-0">Total Saving of Trees</h2>
                   </div>
                 </Row>
               </CardHeader>
@@ -144,7 +144,8 @@ const Index = (props) => {
             </Card>
           </Col>
         </Row>
-        <Row className="mt-5">
+        {/*
+          <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
               <CardHeader className="border-0">
@@ -330,6 +331,9 @@ const Index = (props) => {
             </Card>
           </Col>
         </Row>
+
+        */}
+        
       </Container>
     </>
   );

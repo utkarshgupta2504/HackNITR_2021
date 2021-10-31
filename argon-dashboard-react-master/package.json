@@ -37,12 +37,11 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  
   "browserslist": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ],
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version"
+  ],
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
     "axios": "^0.24.0",

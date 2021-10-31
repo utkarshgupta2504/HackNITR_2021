@@ -207,12 +207,13 @@ function chartOptions() {
         elements: {
           point: {
             radius: 0,
-            backgroundColor: colors.theme["primary"],
+            // backgroundColor: colors.theme["primary"],
+            backgroundColor: 'green',
           },
           line: {
             tension: 0.4,
             borderWidth: 4,
-            borderColor: colors.theme["primary"],
+            borderColor: 'green',
             backgroundColor: colors.transparent,
             borderCapStyle: "rounded",
           },
@@ -318,8 +319,9 @@ let chartExample1 = {
           },
           ticks: {
             callback: function (value) {
-              if (!(value % 10)) {
-                return "$" + value + "k";
+              if (!(value % 0.1)) {
+                // return "$" + value + "k";
+                return value;
               }
             },
           },
@@ -337,7 +339,7 @@ let chartExample1 = {
             content += label;
           }
 
-          content += "$" + yLabel + "k";
+          content += yLabel;
           return content;
         },
       },
@@ -349,18 +351,18 @@ let chartExample1 = {
       datasets: [
         {
           label: "Performance",
-          data: [0, 20, 10, 30, 15, 40, 20, 60, 60],
+          data: [0.1, 1.2, 0.7, 0.9, 1.05, 1.2, 2, 0.5],
         },
       ],
     };
   },
   data2: (canvas) => {
     return {
-      labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      labels: ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"],
       datasets: [
         {
           label: "Performance",
-          data: [0, 20, 5, 25, 10, 30, 15, 40, 40],
+          data: [0, 0.020, 0.05, 0.025, 0.1, 0.08, 0.2],
         },
       ],
     };
@@ -375,7 +377,7 @@ let chartExample2 = {
         {
           ticks: {
             callback: function (value) {
-              if (!(value % 10)) {
+              if (!(value % 1)) {
                 //return '$' + value + 'k'
                 return value;
               }
@@ -403,9 +405,10 @@ let chartExample2 = {
     labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       {
-        label: "Sales",
-        data: [25, 20, 30, 22, 17, 29],
+        label: "Trees Saved",
+        data: [0.7, 0.9, 1.05, 1.2, 2, 0.5],
         maxBarThickness: 10,
+        backgroundColor: 'green'
       },
     ],
   },
