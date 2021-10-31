@@ -1,7 +1,7 @@
 import React, { PureComponent, useState, useEffect } from "react";
 import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
 import "react-notifications/lib/notifications.css";
-
+import auth from "utils/auth";
 import {
   NotificationContainer,
   NotificationManager,
@@ -32,6 +32,8 @@ import Axios from "axios";
 
 import "./map_container.css";
 import Header from "components/Headers/Header";
+var axios = require('axios');
+var qs = require('qs');
 
 const mapStyle = {
   width: "100%",
@@ -63,7 +65,10 @@ const MapView = (props) => {
     longitude: 78.9629,
     zoom: 4,
   });
-  let [modal_visibile, setModal] = useState(true);
+  let [modal_visibile, setModal] = useState(false);
+  let [c02, setC02] = useState(0);
+  let [trees, setTrees] = useState(0)
+  let [treesAnnual, setTreesAnnual] = useState(0)
 
   let [tempMarker, setTempMarker] = useState(null);
   let [markers, setMarkers] = useState([]);
@@ -107,6 +112,7 @@ const MapView = (props) => {
   };
 
   const getDistance = async () => {
+    
     if (sourceMarker == null || destinationMarker == null) {
         NotificationManager.error(
             "Need the start and destination cooridnates both",
@@ -127,6 +133,34 @@ const MapView = (props) => {
         console.log(response.data);
 
         setDistance(response.data.distances[0][0]);
+        setModal(true)
+        var data = qs.stringify({
+            'distance': {distance}
+          });
+          var config = {
+            method: 'post',
+            url: 'http://3.144.30.250/carbon-calculator/calculate',
+            headers: { 
+              'x-access-token':auth.getToken(),
+            //   'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjE3ZDVkMzI2ZDJmZTU2MWVkOWEyYzkxIiwiZW1haWwiOiJzYW1hcnRoYXJvcmExNzZAZ21haWwuY29tIiwiaWF0IjoxNjM1NjA2MjQ1LCJleHAiOjE2MzU2MTM0NDV9.jTB5E7CEIKByFo_SLvEJ6H-vwUlSVg1nf7btJ1YYPJ0', 
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data : data
+          };
+          
+          axios(config)
+          .then(function (response) {
+            
+            console.log(response.data);
+            // console.log()
+            setC02(response.data["emmision-value"])
+            setTrees(response.data["baby-trees-saved"])
+            setTreesAnnual(response.data["annual-trees-saved"])
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
       } else {
         console.log("Map Box Api Fetch error: " + response.data);
       }
@@ -218,7 +252,7 @@ const MapView = (props) => {
         </Col>
 
         <Col>
-          <Button color="success" onClick={getDistance}>
+          <Button color="success" onClick={getDistance} >
             Get Distance
           </Button>
         </Col>
@@ -264,7 +298,7 @@ const MapView = (props) => {
      <Modal className="modal-dialog-centered" isOpen={modal_visibile}>
      <div className="modal-header">
        <h5 className="modal-title" id="ModalLabel">
-         Terms and Conditions
+         Trip Stats
        </h5>
        <button
               aria-label="Close"
@@ -281,8 +315,9 @@ const MapView = (props) => {
      </div>
      <div className="modal-body">
      <h4 >Total Distance to Destination: {distance}</h4>
-     <h4  className="h4 text-danger" color="danger">Tonnes if CO2 emmision: 0.01</h4 >
-     <h4 className="h4 text-success" color="danger">Number of baby trees saved if you take the metro: 0.165</h4 >
+     <h4  className="h4 text-danger" color="danger">Tonnes of CO2 emmision: {c02}</h4 >
+     <h4 className="h4 text-success" color="danger">Number of baby trees saved if you take the metro: {trees.toFixed(4)}</h4 >
+     <h4 className="h4 text-success" color="danger">Number of baby trees saved annually if you make it a habit: {treesAnnual.toFixed(4)}</h4 >
     
      
      </div>
@@ -292,7 +327,14 @@ const MapView = (props) => {
          type="button"
          onClick={() => setModal(!modal_visibile)}
        >
-         Agree
+         I'll save the Trees
+       </Button>
+       <Button
+         color="danger"
+         type="button"
+         onClick={() => setModal(!modal_visibile)}
+       >
+        No, I'll drive
        </Button>
      </div>
    </Modal>
