@@ -81,6 +81,10 @@ const Index = (props) => {
                     <Nav className="justify-content-end" pills>
                       <NavItem>
                         <NavLink
+                          style={{
+                            backgroundColor: "#2dce89",
+                            color: activeNav === 1 ? "green" : "white",
+                          }}
                           className={classnames("py-2 px-3", {
                             active: activeNav === 1,
                           })}
@@ -93,6 +97,10 @@ const Index = (props) => {
                       </NavItem>
                       <NavItem>
                         <NavLink
+                          style={{
+                            backgroundColor: "#2dce89",
+                            color: activeNav === 2 ? "green" : "white",
+                          }}
                           className={classnames("py-2 px-3", {
                             active: activeNav === 2,
                           })}
@@ -333,7 +341,6 @@ const Index = (props) => {
         </Row>
 
         */}
-        
       </Container>
     </>
   );
