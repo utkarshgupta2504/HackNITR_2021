@@ -37,10 +37,10 @@ const AdminNavbar = () => {
           <NavbarBrand to="/" tag={Link}>
             <img
               alt="..."
-              src={
-                require("../../assets/img/brand/argon-react-white.png").default
-              }
+              className="navbar-brand-image"
+              src={require("../../assets/img/brand/logo.png").default}
             />
+            <span className="px-2">Green Guide</span>
           </NavbarBrand>
           <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
