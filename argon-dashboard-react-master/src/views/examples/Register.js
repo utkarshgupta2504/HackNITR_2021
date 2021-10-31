@@ -94,7 +94,7 @@ const Register = () => {
       console.log(userCredentials);
       var config = {
         method: "post",
-        url: "http://3.144.30.250/user/register",
+        url: "http://3.144.30.250/api/user/register",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
