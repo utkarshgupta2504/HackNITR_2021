@@ -226,7 +226,7 @@ const MapView = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col style={{ color: 'green', fontWeight: 'bold', fontSize: '1.5rem'}}>Total Distance: {distance}</Col>
+        <Col style={{ color: '#2dce89', fontWeight: 'bold', fontSize: '1.5rem'}}>Total Distance: {distance}</Col>
       </Row>
     </Container>
     
