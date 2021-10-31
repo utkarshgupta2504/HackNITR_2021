@@ -103,12 +103,16 @@ const MapWrapper = () => {
   }, []);
   return (
     <>
+    <Header />
+    <Container className="mt--7" fluid>
       <div
-        style={{ height: `600px` }}
-        className="map-canvas"
-        id="map-canvas"
-        ref={mapRef}
+      style={{ height: `600px` }}
+      className="map-canvas"
+      id="map-canvas"
+      ref={mapRef}
       ></div>
+    </Container>
+      
     </>
   );
 };

@@ -6,6 +6,7 @@ import { easeCubic } from "d3-ease";
 import Axios from "axios";
 
 import "./map_container.css";
+import Header from "components/Headers/Header";
 
 const mapStyle = {
   width: "100%",
@@ -133,13 +134,16 @@ const MapView = (props) => {
   };
 
   return (
+    
+
     <Container fluid={true}>
       <Row>
         <Col>
-          <h2>Mapbox Tutorial</h2>
+         <h2 style={{ color: 'white' }}>.</h2>
         </Col>
       </Row>
-      <Row className="py-4">
+    
+      <Row className="py-4" style={{ zIndex: '999' }}>
         <Col xs={2}>
           <Geocoder
             mapboxApiAccessToken={mapboxApiKey}
@@ -222,9 +226,10 @@ const MapView = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col>Total Distance: {distance}</Col>
+        <Col style={{ color: 'green', fontWeight: 'bold', fontSize: '1.5rem'}}>Total Distance: {distance}</Col>
       </Row>
     </Container>
+    
   );
 };
 
