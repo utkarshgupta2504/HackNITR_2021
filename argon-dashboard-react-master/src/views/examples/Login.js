@@ -46,7 +46,7 @@ import {
 } from "react-notifications";
 
 const Login = () => {
-  const history = useHistory();
+  //   const history = useHistory();
   const [state, setState] = useState({
     email: "",
     password: "",
@@ -65,7 +65,7 @@ const Login = () => {
       [target.name]: target.value,
     });
   };
-
+  const history = useHistory();
   const handleSubmit = (e) => {
     e.preventDefault();
     setState({
@@ -195,8 +195,8 @@ const Login = () => {
           <Col className="text-right" xs="6">
             <a
               className="text-light"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              href="/auth/register"
+              onClick={(e) => history.push("/auth/student-register")}
             >
               <small>Create new account</small>
             </a>
