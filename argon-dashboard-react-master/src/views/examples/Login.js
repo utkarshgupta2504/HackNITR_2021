@@ -31,58 +31,116 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { useEffect, useState } from "react";
+import auth from "../../utils/auth";
+import { useHistory } from "react-router";
+import React from "react";
+import { withRouter } from "react-router-dom";
+import axios from "axios";
+import qs from "querystring";
+import "react-notifications/lib/notifications.css";
+
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
 
 const Login = () => {
+  const history = useHistory();
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+    buttonDisable: false,
+  });
+
+  useEffect(() => {
+    if (auth.getToken() && auth.getUserInfo()) {
+      history.push("/admin");
+    }
+  }, []);
+  const handleChange = ({ target }) => {
+    // console.log(`[Login] ${target.name}: ${target.value}`);
+    setState({
+      ...state,
+      [target.name]: target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setState({
+      ...state,
+      buttonDisable: true,
+    });
+    var config = {
+      method: "post",
+      url: "http://3.144.30.250/user/login",
+      data: qs.stringify(state),
+    };
+    console.log(config.data);
+    axios(config)
+      .then((response) => {
+        auth.setToken(response.data.token, true);
+        const { email, first_name, last_name } = response.data;
+        const id = response.data._id;
+        auth.setUserInfo({ email, id, first_name, last_name }, true);
+        console.log(`[Login]`);
+        console.log(response);
+        console.log(auth.getUserInfo());
+        history.push("/admin");
+      })
+      .catch((err) => {
+        console.log(err);
+        setState({
+          state,
+          buttonDisable: false,
+        });
+        NotificationManager.error(
+          "Username/Password do not match.",
+          "Error!",
+          5000,
+          () => {}
+        );
+        console.log(err);
+      });
+    // axios
+    //   .post("http://3.144.30.250/user/login", qs.stringify(state))
+
+    //   .then((response) => {
+    //     auth.setToken(response.data.jwt, true);
+    //     const { email } = response.data;
+    //     const id = response.data._id;
+    //     auth.setUserInfo({ email, id }, true);
+    //     console.log(`[Login]`);
+    //     console.log(response);
+    //     console.log(auth.getUserInfo());
+    //     history.push("/student-dashboard");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setState({
+    //       state,
+    //       buttonDisable: false,
+    //     });
+    //     NotificationManager.error(
+    //       "Username/Password do not match.",
+    //       "Error!",
+    //       5000,
+    //       () => {}
+    //     );
+    //     console.log(err);
+    //   });
+  };
   return (
     <>
+      <NotificationContainer />
       <Col lg="5" md="7">
         <Card className="bg-secondary shadow border-0">
-          <CardHeader className="bg-transparent pb-5">
-            <div className="text-muted text-center mt-2 mb-3">
-              <small>Sign in with</small>
-            </div>
-            <div className="btn-wrapper text-center">
-              <Button
-                className="btn-neutral btn-icon"
-                color="default"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span className="btn-inner--icon">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/icons/common/github.svg")
-                        .default
-                    }
-                  />
-                </span>
-                <span className="btn-inner--text">Github</span>
-              </Button>
-              <Button
-                className="btn-neutral btn-icon"
-                color="default"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span className="btn-inner--icon">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/icons/common/google.svg")
-                        .default
-                    }
-                  />
-                </span>
-                <span className="btn-inner--text">Google</span>
-              </Button>
-            </div>
-          </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <small>Or sign in with credentials</small>
+              <small>Sign in with your credentials</small>
             </div>
-            <Form role="form">
+            <Form role="form" onSubmit={handleSubmit}>
               <FormGroup className="mb-3">
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
@@ -94,6 +152,9 @@ const Login = () => {
                     placeholder="Email"
                     type="email"
                     autoComplete="new-email"
+                    name="email"
+                    value={state.email}
+                    onChange={handleChange}
                   />
                 </InputGroup>
               </FormGroup>
@@ -108,24 +169,20 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    name="password"
+                    value={state.password}
+                    onChange={handleChange}
                   />
                 </InputGroup>
               </FormGroup>
-              <div className="custom-control custom-control-alternative custom-checkbox">
-                <input
-                  className="custom-control-input"
-                  id=" customCheckLogin"
-                  type="checkbox"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor=" customCheckLogin"
-                >
-                  <span className="text-muted">Remember me</span>
-                </label>
-              </div>
+
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button">
+                <Button
+                  className="my-4"
+                  color="primary"
+                  type="submit"
+                  disabled={state.buttonDisable}
+                >
                   Sign in
                 </Button>
               </div>
@@ -133,15 +190,7 @@ const Login = () => {
           </CardBody>
         </Card>
         <Row className="mt-3">
-          <Col xs="6">
-            <a
-              className="text-light"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
-            >
-              <small>Forgot password?</small>
-            </a>
-          </Col>
+          <Col xs="6"></Col>
           <Col className="text-right" xs="6">
             <a
               className="text-light"

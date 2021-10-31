@@ -17,6 +17,14 @@
 */
 
 // reactstrap components
+import React, { useState, useEffect, useRef } from "react";
+import { withRouter } from "react-router-dom";
+import axios from "axios";
+import qs from "querystring";
+import { useHistory } from "react-router-dom";
+import swal from "sweetalert";
+
+import auth from "../../utils/auth";
 import {
   Button,
   Card,
@@ -31,69 +39,159 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import "react-notifications/lib/notifications.css";
+
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
 
 const Register = () => {
+  const danger = {
+    color: "#ff0000",
+  };
+  const main = useRef(0);
+  useEffect(() => {
+    if (auth.getToken() && auth.getUserInfo()) {
+      history.push("/admin");
+    }
+  }, []);
+  const [userCredentials, setUserCredentials] = useState({
+    first_name: "",
+
+    last_name: "",
+    email: "",
+    password: "",
+    password2: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setUserCredentials({ ...userCredentials, [name]: value });
+  };
+  const history = useHistory();
+  const onSubmit = async (e) => {
+    const {
+      first_name,
+      last_name,
+
+      password,
+      password2,
+      email,
+    } = userCredentials;
+
+    e.preventDefault();
+    if (password !== password2) {
+      NotificationManager.error(
+        "Passwords Do not Match",
+        "Error!",
+        5000,
+        () => {}
+      );
+      return;
+    }
+    try {
+      console.log(userCredentials);
+      var config = {
+        method: "post",
+        url: "http://3.144.30.250/user/register",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: qs.stringify(userCredentials),
+      };
+      await axios(config)
+        .then((res) => {
+          if (res.status >= 200 && res.status < 300) {
+            auth.setToken(res.data.token, true);
+            const { email, first_name, last_name } = res.data;
+            const id = res.data._id;
+            auth.setUserInfo({ email, id, first_name, last_name }, true);
+            console.log(`[Register]`);
+            console.log(res);
+            console.log(auth.getUserInfo());
+            swal(
+              `Hi, ${first_name}!`,
+              "Welcome to your first step towards saving the planet.",
+              "success"
+            ).then((value) => {
+              history.push("/admin");
+            });
+          } else {
+            // NotificationManager.error(res.data, "Error!", 5000, () => {});
+            console.log(res.data, res.status);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      NotificationManager.error(
+        "Error creating new user",
+        "Error!",
+        5000,
+        () => {}
+      );
+
+      return;
+    }
+  };
+
   return (
     <>
+      <NotificationContainer />
       <Col lg="6" md="8">
         <Card className="bg-secondary shadow border-0">
-          <CardHeader className="bg-transparent pb-5">
-            <div className="text-muted text-center mt-2 mb-4">
-              <small>Sign up with</small>
-            </div>
-            <div className="text-center">
-              <Button
-                className="btn-neutral btn-icon mr-4"
-                color="default"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span className="btn-inner--icon">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/icons/common/github.svg")
-                        .default
-                    }
-                  />
-                </span>
-                <span className="btn-inner--text">Github</span>
-              </Button>
-              <Button
-                className="btn-neutral btn-icon"
-                color="default"
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span className="btn-inner--icon">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/icons/common/google.svg")
-                        .default
-                    }
-                  />
-                </span>
-                <span className="btn-inner--text">Google</span>
-              </Button>
+          <CardHeader>
+            <div className="text-muted text-center ">
+              <h1 className="display-3">Sign Up </h1>
             </div>
           </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
-            <div className="text-center text-muted mb-4">
-              <small>Or sign up with credentials</small>
-            </div>
-            <Form role="form">
+            <Form role="form" onSubmit={onSubmit}>
               <FormGroup>
+                <small>
+                  First Name<span style={danger}>*</span>
+                </small>
                 <InputGroup className="input-group-alternative mb-3">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
                       <i className="ni ni-hat-3" />
                     </InputGroupText>
                   </InputGroupAddon>
-                  <Input placeholder="Name" type="text" />
+                  <Input
+                    placeholder="First Name"
+                    type="text"
+                    name="first_name"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
                 </InputGroup>
               </FormGroup>
               <FormGroup>
+                <small>
+                  Last Name<span style={danger}>*</span>
+                </small>
+                <InputGroup className="input-group-alternative mb-3">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-hat-3" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Last Name"
+                    type="text"
+                    name="last_name"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </InputGroup>
+              </FormGroup>
+
+              <FormGroup>
+                <small>
+                  Email<span style={danger}>*</span>
+                </small>
                 <InputGroup className="input-group-alternative mb-3">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
@@ -103,54 +201,60 @@ const Register = () => {
                   <Input
                     placeholder="Email"
                     type="email"
-                    autoComplete="new-email"
+                    autoComplete="email"
+                    name="email"
+                    onChange={(e) => handleChange(e)}
+                    required
                   />
                 </InputGroup>
               </FormGroup>
               <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-lock-circle-open" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    autoComplete="new-password"
-                  />
-                </InputGroup>
+                <Row>
+                  <Col lg="6">
+                    <small>
+                      Password<span style={danger}>*</span>
+                    </small>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-lock-circle-open" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="password"
+                        required
+                        name="password"
+                        id="password"
+                        placeholder="Password"
+                        onChange={(e) => handleChange(e)}
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col lg="6">
+                    <small>
+                      Confirm Password<span style={danger}>*</span>
+                    </small>
+                    <InputGroup className="input-group-alternative mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-lock-circle-open" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        type="password"
+                        name="password2"
+                        id="password2"
+                        required
+                        placeholder="Confirm Password"
+                        onChange={(e) => handleChange(e)}
+                      />
+                    </InputGroup>
+                  </Col>
+                </Row>
               </FormGroup>
-              <div className="text-muted font-italic">
-                <small>
-                  password strength:{" "}
-                  <span className="text-success font-weight-700">strong</span>
-                </small>
-              </div>
-              <Row className="my-4">
-                <Col xs="12">
-                  <div className="custom-control custom-control-alternative custom-checkbox">
-                    <input
-                      className="custom-control-input"
-                      id="customCheckRegister"
-                      type="checkbox"
-                    />
-                    <label
-                      className="custom-control-label"
-                      htmlFor="customCheckRegister"
-                    >
-                      <span className="text-muted">
-                        I agree with the{" "}
-                        <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                          Privacy Policy
-                        </a>
-                      </span>
-                    </label>
-                  </div>
-                </Col>
-              </Row>
+
               <div className="text-center">
-                <Button className="mt-4" color="primary" type="button">
+                <Button className="mt-4" color="primary" type="submit">
                   Create account
                 </Button>
               </div>
