@@ -81,9 +81,9 @@ const Login = () => {
     axios(config)
       .then((response) => {
         auth.setToken(response.data.token, true);
-        const { email } = response.data;
+        const { email, first_name, last_name } = response.data;
         const id = response.data._id;
-        auth.setUserInfo({ email, id }, true);
+        auth.setUserInfo({ email, id, first_name, last_name }, true);
         console.log(`[Login]`);
         console.log(response);
         console.log(auth.getUserInfo());

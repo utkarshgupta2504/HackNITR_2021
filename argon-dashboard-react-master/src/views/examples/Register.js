@@ -104,9 +104,9 @@ const Register = () => {
         .then((res) => {
           if (res.status >= 200 && res.status < 300) {
             auth.setToken(res.data.token, true);
-            const { email } = res.data;
+            const { email, first_name, last_name } = res.data;
             const id = res.data._id;
-            auth.setUserInfo({ email, id }, true);
+            auth.setUserInfo({ email, id, first_name, last_name }, true);
             console.log(`[Register]`);
             console.log(res);
             console.log(auth.getUserInfo());

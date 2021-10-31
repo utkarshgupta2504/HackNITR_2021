@@ -16,6 +16,7 @@
 
 */
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import auth from "../../utils/auth";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -38,32 +39,16 @@ import {
 } from "reactstrap";
 
 const AdminNavbar = (props) => {
+  const history = useHistory();
   const [name, setName] = useState("");
   useEffect(() => {
-    axios
-      .get(
-        process.env.REACT_APP_API_URI +
-          `${auth.getUserInfo().type}s/${auth.getUserInfo().id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${auth.getToken()}`,
-          },
-        }
-      )
-      .then((resu) => {
-        console.log(resu.data);
-        if (resu.data.middlename) {
-          setName(
-            resu.data.firstName +
-              " " +
-              resu.data.middlename[0] +
-              ". " +
-              resu.data.lastName
-          );
-        } else {
-          setName(resu.data.firstName + " " + resu.data.lastName);
-        }
-      });
+    if (auth.getUserInfo()) {
+      setName(
+        auth.getUserInfo().first_name + " " + auth.getUserInfo().last_name
+      );
+    } else {
+      history.push("/auth/login");
+    }
   });
 
   return (
@@ -102,7 +87,10 @@ const AdminNavbar = (props) => {
                     />
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
-                    <span className="mb-0 text-sm font-weight-bold" style={{ color: 'black' }}>
+                    <span
+                      className="mb-0 text-sm font-weight-bold"
+                      style={{ color: "black" }}
+                    >
                       Jessica Jones
                     </span>
                   </Media>
