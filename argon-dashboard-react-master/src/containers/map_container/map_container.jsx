@@ -136,11 +136,12 @@ const MapView = (props) => {
       if (response.status == 200) {
         console.log(response.data);
 
-        setDistance(response.data.distances[0][0]);
+        setDistance(Math.round(response.data.distances[0][0]));
         setModal(true);
         var data = qs.stringify({
-          distance: { distance },
+          distance:  Math.min(1000000,Math.round(response.data.distances[0][0]/1000.0)) ,
         });
+        console.log('data', data)
         var config = {
           method: "post",
           url: "https://vast-bastion-90714.herokuapp.com/carbon-calculator/calculate",
@@ -171,15 +172,10 @@ const MapView = (props) => {
     }
   };
   const history = useHistory()
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
-  const addTrees = ()=>{
-    //   axios
-     setModal(!modal_visibile);
+  const addTrees = () =>{
      var data = qs.stringify({
         'qty': trees,
-        'id': auth.getUserInfo()._id,
+        'id': auth.getUserInfo().id,
         'email': auth.getUserInfo().email,
         'token': auth.getToken() 
       });
@@ -191,13 +187,14 @@ const MapView = (props) => {
         },
         data : data
       };
+      console.log(data,'trees');
       
       axios(config)
       .then(function (response) {
-        console.log(JSON.stringify(response.data));
+          console.log(response)
         swal(
             "Hurray!!",
-            "Saved Trees Added to your name",
+            `Your ${trees.toFixed(2)} saved trees are added in your account`,
             "success"
           ).then((value) => {
             history.push("/admin");
@@ -206,7 +203,45 @@ const MapView = (props) => {
       .catch(function (error) {
         console.log(error);
       });
+     setModal(!modal_visibile);
+
   }
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+//   const addTrees = ()=>{
+//     //   axios
+//      setModal(!modal_visibile);
+//      var data = qs.stringify({
+//         'qty': trees,
+//         'id': auth.getUserInfo()._id,
+//         'email': auth.getUserInfo().email,
+//         'token': auth.getToken() 
+//       });
+//       var config = {
+//         method: 'post',
+//         url: 'https://vast-bastion-90714.herokuapp.com/user/add-trees',
+//         headers: { 
+//           'Content-Type': 'application/x-www-form-urlencoded'
+//         },
+//         data : data
+//       };
+      
+//       axios(config)
+//       .then(function (response) {
+//         console.log(JSON.stringify(response.data));
+//         swal(
+//             "Hurray!!",
+//             "Saved Trees Added to your name",
+//             "success"
+//           ).then((value) => {
+//             history.push("/admin");
+//           });
+//       })
+//       .catch(function (error) {
+//         console.log(error);
+//       });
+//   }
 
   const onSelected = (viewport, item) => {
     setTempMarker({
@@ -344,7 +379,7 @@ const MapView = (props) => {
           </button>
         </div>
         <div className="modal-body">
-          <h4>Total Distance to Destination: {distance}</h4>
+          <h4>Total Distance to Destination: {distance/1000.0}km</h4>
           <h4 className="h4 text-danger" color="danger">
             Tonnes of CO2 emmision: {c02}
           </h4>
@@ -360,7 +395,7 @@ const MapView = (props) => {
           <Button
             color="success"
             type="button"
-            onClick={() => setModal(!modal_visibile)}
+            onClick={addTrees}
           >
             I'll save the Trees
           </Button>
